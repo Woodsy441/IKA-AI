@@ -4,40 +4,48 @@ Version 0.3
 """
 
 def analyse_market(rsi, ema20, ema50, current_price):
+
     score = 0
     reasons = []
 
-    # Trend
+    # EMA Trend
     if current_price > ema20:
         score += 20
-        reasons.append("Price is above the 20 EMA")
+        reasons.append("Price above EMA20")
+    else:
+        reasons.append("Price below EMA20")
 
     if current_price > ema50:
         score += 20
-        reasons.append("Price is above the 50 EMA")
+        reasons.append("Price above EMA50")
+    else:
+        reasons.append("Price below EMA50")
 
-    # Momentum
+    # RSI
     if 45 <= rsi <= 65:
         score += 20
-        reasons.append("RSI is healthy")
-
+        reasons.append("Healthy RSI")
     elif rsi < 30:
-        reasons.append("RSI indicates oversold conditions")
-
+        score += 15
+        reasons.append("Oversold")
     elif rsi > 70:
-        reasons.append("RSI indicates overbought conditions")
+        reasons.append("Overbought")
 
     # Rating
     if score >= 60:
-        rating = "Bullish"
+        rating = "BUY"
     elif score >= 40:
-        rating = "Neutral"
+        rating = "HOLD"
     else:
-        rating = "Weak"
+        rating = "SELL"
+
+    stop_loss = round(current_price * 0.99, 2)
+    take_profit = round(current_price * 1.02, 2)
 
     return {
         "score": score,
         "rating": rating,
-        "reasons": reasons
+        "reasons": reasons,
+        "stop_loss": stop_loss,
+        "take_profit": take_profit
     }
-    
