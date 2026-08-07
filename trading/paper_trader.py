@@ -1,9 +1,13 @@
 from datetime import datetime
 
-from trading.portfolio import add_trade
+from trading.portfolio import add_trade, trade_exists
 
 
 def open_trade(signal):
+
+    if trade_exists(signal["asset"]):
+        print(f"{signal['asset']} already has an open trade.")
+        return None
 
     trade = {
         "asset": signal["asset"],

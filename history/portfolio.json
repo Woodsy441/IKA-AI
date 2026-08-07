@@ -1,0 +1,38 @@
+[
+    {
+        "asset": "NVIDIA",
+        "action": "BUY",
+        "entry": 221.99,
+        "stop_loss": 206.94,
+        "take_profit": 244.58,
+        "position_size": 6.64,
+        "opened": "2026-08-07 15:06:22.517112",
+        "status": "OPEN",
+        "current_price": 223.05,
+        "profit_loss": 7.04
+    },
+    {
+        "asset": "Amazon",
+        "action": "BUY",
+        "entry": 276.14,
+        "stop_loss": 257.54,
+        "take_profit": 304.04,
+        "position_size": 5.38,
+        "opened": "2026-08-07 15:06:22.773561",
+        "status": "OPEN",
+        "current_price": 276.28,
+        "profit_loss": 0.75
+    },
+    {
+        "asset": "Google",
+        "action": "BUY",
+        "entry": 355.42,
+        "stop_loss": 329.82,
+        "take_profit": 393.83,
+        "position_size": 3.91,
+        "opened": "2026-08-07 15:06:23.357683",
+        "status": "OPEN",
+        "current_price": 355.59,
+        "profit_loss": 0.66
+    }
+]
