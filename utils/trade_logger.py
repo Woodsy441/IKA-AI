@@ -1,74 +1,50 @@
-from trading.storage import save_portfolio, load_portfolio
-from trading.trade_manager import update_trade
-from trading.account import account
-from utils.trade_logger import log_closed_trade
-
-portfolio = load_portfolio()
+import csv
+import os
 
 
-def trade_exists(asset):
-
-    for trade in portfolio:
-
-        if trade["asset"] == asset and trade["status"] == "OPEN":
-            return True
-
-    return False
+TRADE_HISTORY = "history/trade_history.csv"
 
 
-def add_trade(trade):
+def log_trade(trade):
+    """
+    Log every market scan to the CSV history file.
+    """
 
-    portfolio.append(trade)
-    save_portfolio(portfolio)
+    file_exists = os.path.isfile(TRADE_HISTORY)
+
+    with open(TRADE_HISTORY, "a", newline="") as file:
+
+        writer = csv.writer(file)
+
+        if not file_exists:
+            writer.writerow([
+                "Asset",
+                "Rating",
+                "Score",
+                "Price",
+                "Stop Loss",
+                "Take Profit"
+            ])
+
+        writer.writerow([
+            trade["asset"],
+            trade["rating"],
+            trade["score"],
+            trade["price"],
+            trade["stop_loss"],
+            trade["take_profit"]
+        ])
 
 
-def show_portfolio():
+def log_closed_trade(trade):
+    """
+    Placeholder for logging closed trades.
+    We'll expand this in Version 2.1.
+    """
 
-    print("\n==============================")
-    print("IKA AI PORTFOLIO")
-    print("==============================")
-
-    if len(portfolio) == 0:
-        print("No open trades.\n")
-        return
-
-    closed_trades = []
-
-    for i, trade in enumerate(portfolio, start=1):
-
-        trade = update_trade(trade)
-
-        if trade["status"] == "CLOSED":
-
-            account.close_trade(trade)
-
-            log_closed_trade(trade)
-
-            print(
-                f"{trade['asset']} CLOSED "
-                f"({trade['close_reason']}) "
-                f"P/L: £{trade['profit_loss']:.2f}"
-            )
-
-            closed_trades.append(trade)
-
-        else:
-
-            print(
-                f"{i}. "
-                f"{trade['asset']}  "
-                f"{trade['action']}  "
-                f"Entry: {trade['entry']:.2f}  "
-                f"Current: {trade['current_price']:.2f}  "
-                f"P/L: £{trade['profit_loss']:.2f}  "
-                f"Status: {trade['status']}  "
-                f"Size: {trade['position_size']}"
-            )
-
-    for trade in closed_trades:
-        portfolio.remove(trade)
-
-    save_portfolio(portfolio)
-
-    print("==============================\n")
+    print(
+        f"Closed Trade: "
+        f"{trade['asset']} "
+        f"P/L £{trade['profit_loss']:.2f}"
+    )
     

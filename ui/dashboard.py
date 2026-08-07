@@ -1,5 +1,9 @@
 import customtkinter as ctk
 
+from controllers.app_controller import AppController
+from ui.account_frame import AccountFrame
+from ui.scanner_frame import ScannerFrame
+
 
 class IKADashboard(ctk.CTk):
 
@@ -7,121 +11,135 @@ class IKADashboard(ctk.CTk):
         super().__init__()
 
         self.title("IKA AI")
-        self.geometry("1100x700")
+        self.geometry("1400x850")
 
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
 
-        # ==========================
-        # Title
-        # ==========================
+        # --------------------------
+        # Controller
+        # --------------------------
+
+        self.controller = AppController()
+
+        # --------------------------
+        # Header
+        # --------------------------
 
         title = ctk.CTkLabel(
             self,
             text="IKA AI",
             font=("Arial", 34, "bold")
         )
-
-        title.pack(pady=20)
+        title.pack(pady=(20, 5))
 
         subtitle = ctk.CTkLabel(
             self,
             text="Intelligent Trading Assistant",
             font=("Arial", 18)
         )
+        subtitle.pack(pady=(0, 20))
 
-        subtitle.pack()
+        # --------------------------
+        # Main Frame
+        # --------------------------
 
-        # ==========================
-        # Account Frame
-        # ==========================
+        self.main_frame = ctk.CTkFrame(self)
+        self.main_frame.pack(
+            fill="both",
+            expand=True,
+            padx=20,
+            pady=20
+        )
 
-        self.account_frame = ctk.CTkFrame(self)
+        # --------------------------
+        # Sidebar
+        # --------------------------
 
-        self.account_frame.pack(
+        self.menu_frame = ctk.CTkFrame(
+            self.main_frame,
+            width=220
+        )
+
+        self.menu_frame.pack(
+            side="left",
+            fill="y",
+            padx=(15, 10),
+            pady=15
+        )
+
+        menu_title = ctk.CTkLabel(
+            self.menu_frame,
+            text="Navigation",
+            font=("Arial", 22, "bold")
+        )
+
+        menu_title.pack(pady=(20, 25))
+
+        ctk.CTkButton(
+            self.menu_frame,
+            text="🏠 Dashboard"
+        ).pack(fill="x", padx=20, pady=8)
+
+        ctk.CTkButton(
+            self.menu_frame,
+            text="📈 Scan Markets"
+        ).pack(fill="x", padx=20, pady=8)
+
+        ctk.CTkButton(
+            self.menu_frame,
+            text="💼 Portfolio"
+        ).pack(fill="x", padx=20, pady=8)
+
+        ctk.CTkButton(
+            self.menu_frame,
+            text="📜 Trade History"
+        ).pack(fill="x", padx=20, pady=8)
+
+        ctk.CTkButton(
+            self.menu_frame,
+            text="⚙ Settings"
+        ).pack(fill="x", padx=20, pady=8)
+
+        # --------------------------
+        # Right Side
+        # --------------------------
+
+        self.content_frame = ctk.CTkFrame(self.main_frame)
+
+        self.content_frame.pack(
+            side="left",
+            fill="both",
+            expand=True,
+            padx=(10, 15),
+            pady=15
+        )
+
+        # --------------------------
+        # Account
+        # --------------------------
+
+        self.account = AccountFrame(self.content_frame)
+
+        self.account.pack(
             fill="x",
             padx=20,
             pady=20
         )
 
-        self.balance_label = ctk.CTkLabel(
-            self.account_frame,
-            text="Balance: £10,000",
-            font=("Arial", 20)
+        # --------------------------
+        # Scanner
+        # --------------------------
+
+        self.scanner = ScannerFrame(
+            self.content_frame,
+            self.controller
         )
 
-        self.balance_label.pack(
-            anchor="w",
+        self.scanner.pack(
+            fill="both",
+            expand=True,
             padx=20,
-            pady=10
-        )
-
-        self.equity_label = ctk.CTkLabel(
-            self.account_frame,
-            text="Equity: £10,000",
-            font=("Arial", 20)
-        )
-
-        self.equity_label.pack(
-            anchor="w",
-            padx=20,
-            pady=10
-        )
-
-        self.pnl_label = ctk.CTkLabel(
-            self.account_frame,
-            text="Open P/L: £0.00",
-            font=("Arial", 20)
-        )
-
-        self.pnl_label.pack(
-            anchor="w",
-            padx=20,
-            pady=10
-        )
-
-        # ==========================
-        # Buttons
-        # ==========================
-
-        self.button_frame = ctk.CTkFrame(self)
-
-        self.button_frame.pack(
-            fill="x",
-            padx=20,
-            pady=20
-        )
-
-        self.scan_button = ctk.CTkButton(
-            self.button_frame,
-            text="Scan Markets"
-        )
-
-        self.scan_button.pack(
-            side="left",
-            padx=10,
-            pady=15
-        )
-
-        self.refresh_button = ctk.CTkButton(
-            self.button_frame,
-            text="Refresh"
-        )
-
-        self.refresh_button.pack(
-            side="left",
-            padx=10,
-            pady=15
-        )
-
-        self.history_button = ctk.CTkButton(
-            self.button_frame,
-            text="Trade History"
-        )
-
-        self.history_button.pack(
-            side="left",
-            padx=10,
-            pady=15
+            pady=(0, 20)
         )
         
