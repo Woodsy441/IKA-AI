@@ -1,4 +1,5 @@
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
+
+history/portfolio.json
+history/trade_history.csv

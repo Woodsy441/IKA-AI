@@ -11,12 +11,13 @@ def open_trade(signal):
 
     trade = {
         "asset": signal["asset"],
+        "ticker": signal["ticker"],
         "action": signal["rating"],
         "entry": signal["price"],
         "stop_loss": signal["stop_loss"],
         "take_profit": signal["take_profit"],
         "position_size": signal["position_size"],
-        "opened": datetime.now(),
+        "opened": str(datetime.now()),
         "status": "OPEN"
     }
 
@@ -26,6 +27,7 @@ def open_trade(signal):
     print("IKA AI PAPER TRADE")
     print("==============================")
     print(f"Asset: {trade['asset']}")
+    print(f"Ticker: {trade['ticker']}")
     print(f"Action: {trade['action']}")
     print(f"Entry: {trade['entry']:.2f}")
     print(f"Stop Loss: {trade['stop_loss']:.2f}")

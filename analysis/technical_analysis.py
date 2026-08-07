@@ -52,6 +52,7 @@ def analyse_asset(name, ticker):
     )
 
     result["asset"] = name
+    result["ticker"] = ticker
     result["price"] = round(current_price, 2)
 
     result["atr"] = risk["atr"]
