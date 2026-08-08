@@ -1,5 +1,7 @@
 import customtkinter as ctk
 
+from ui.market_table import MarketTable
+
 
 class ScannerFrame(ctk.CTkFrame):
 
@@ -10,50 +12,46 @@ class ScannerFrame(ctk.CTkFrame):
 
         self.configure(corner_radius=10)
 
+        # ---------------- Header ---------------- #
+
+        header = ctk.CTkFrame(self)
+        header.pack(fill="x", padx=15, pady=15)
+
         title = ctk.CTkLabel(
-            self,
+            header,
             text="Market Scanner",
-            font=("Arial", 22, "bold")
+            font=("Segoe UI", 22, "bold")
         )
-        title.pack(pady=(15, 10))
+        title.pack(side="left")
 
         self.scan_button = ctk.CTkButton(
-            self,
-            text="📈 Scan Markets",
+            header,
+            text="🔄 Scan Markets",
+            width=150,
             command=self.scan_markets
         )
-        self.scan_button.pack(pady=10)
+        self.scan_button.pack(side="right")
 
-        self.results_box = ctk.CTkTextbox(
-            self,
-            width=800,
-            height=400
-        )
-        self.results_box.pack(
+        # ---------------- Table ---------------- #
+
+        self.table = MarketTable(self)
+        self.table.pack(
             fill="both",
             expand=True,
-            padx=20,
-            pady=20
+            padx=15,
+            pady=(0, 15)
         )
 
     def scan_markets(self):
 
-        self.results_box.delete("1.0", "end")
+        self.scan_button.configure(state="disabled")
 
-        self.results_box.insert(
-            "end",
-            "Scanning markets...\n\n"
-        )
+        try:
+            results = self.controller.scan()
 
-        results = self.controller.scan()
+            if results:
+                self.table.populate(results)
 
-        for result in results:
-
-            line = (
-                f"{result['asset']:12}"
-                f"{result['rating']:8}"
-                f"{result['score']}%\n"
-            )
-
-            self.results_box.insert("end", line)
+        finally:
+            self.scan_button.configure(state="normal")
             
