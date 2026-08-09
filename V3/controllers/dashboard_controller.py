@@ -1,20 +1,27 @@
 """
+IKA AI v3
 Dashboard Controller
 
-Provides live dashboard data to the UI.
+Connects the dashboard UI to the paper-trading engine.
 """
 
 from pathlib import Path
 import sys
 
-# -------------------------------------------------
-# Add the original IKA AI project to Python's path
-# -------------------------------------------------
+
+# ============================================================
+# PROJECT PATH
+# ============================================================
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+
+
+# ============================================================
+# TRADING ENGINE
+# ============================================================
 
 from trading.account import account
 from trading.storage import load_portfolio
@@ -23,8 +30,14 @@ from trading.storage import load_portfolio
 class DashboardController:
 
     def __init__(self):
+
         self.portfolio = []
+
         self.refresh()
+
+    # ========================================================
+    # Refresh account / portfolio data
+    # ========================================================
 
     def refresh(self):
 
@@ -32,24 +45,20 @@ class DashboardController:
 
         account.update(self.portfolio)
 
-        # ------------------------------
-        # Debug (temporary)
-        # ------------------------------
-
-        print("\n========== DASHBOARD ==========")
-        print("Balance      :", account.balance)
-        print("Open Profit  :", account.open_profit)
-        print("Open Trades  :", len(self.portfolio))
-        print("Portfolio    :", self.portfolio)
-        print("===============================\n")
+    # ========================================================
+    # Account information
+    # ========================================================
 
     def get_balance(self):
+
         return account.balance
 
     def get_equity(self):
+
         return account.balance + account.open_profit
 
     def get_open_profit(self):
+
         return account.open_profit
 
     def get_open_trades(self):
@@ -59,4 +68,16 @@ class DashboardController:
             for trade in self.portfolio
             if trade.get("status") == "OPEN"
         )
+
+    # ========================================================
+    # Open positions
+    # ========================================================
+
+    def get_open_positions(self):
+
+        return [
+            trade
+            for trade in self.portfolio
+            if trade.get("status") == "OPEN"
+        ]
         

@@ -6,18 +6,28 @@ from controllers.dashboard_controller import DashboardController
 class DashboardPage(ctk.CTkFrame):
 
     def __init__(self, master):
+
         super().__init__(master)
 
         self.controller = DashboardController()
+
+        # ==================================================
+        # Main layout
+        # ==================================================
 
         self.grid_columnconfigure(
             (0, 1, 2),
             weight=1
         )
 
-        # -----------------------------------------
+        self.grid_rowconfigure(
+            3,
+            weight=1
+        )
+
+        # ==================================================
         # Title
-        # -----------------------------------------
+        # ==================================================
 
         title = ctk.CTkLabel(
             self,
@@ -31,12 +41,12 @@ class DashboardPage(ctk.CTkFrame):
             columnspan=3,
             sticky="w",
             padx=20,
-            pady=(20, 30)
+            pady=(20, 20)
         )
 
-        # -----------------------------------------
+        # ==================================================
         # Account cards
-        # -----------------------------------------
+        # ==================================================
 
         self.balance_value = self.create_card(
             1,
@@ -80,9 +90,62 @@ class DashboardPage(ctk.CTkFrame):
             "£0.00"
         )
 
-    # -----------------------------------------
-    # Create card
-    # -----------------------------------------
+        # ==================================================
+        # Open positions section
+        # ==================================================
+
+        positions_title = ctk.CTkLabel(
+            self,
+            text="Open Positions",
+            font=("Segoe UI", 22, "bold")
+        )
+
+        positions_title.grid(
+            row=3,
+            column=0,
+            columnspan=3,
+            sticky="w",
+            padx=20,
+            pady=(20, 10)
+        )
+
+        # ==================================================
+        # Positions container
+        # ==================================================
+
+        self.positions_frame = ctk.CTkScrollableFrame(
+            self
+        )
+
+        self.positions_frame.grid(
+            row=4,
+            column=0,
+            columnspan=3,
+            sticky="nsew",
+            padx=20,
+            pady=(0, 20)
+        )
+
+        self.positions_frame.grid_columnconfigure(
+            (0, 1, 2, 3, 4, 5),
+            weight=1
+        )
+
+        # Draw initial table
+        self.update_positions()
+
+        # ==================================================
+        # Auto refresh
+        # ==================================================
+
+        self.after(
+            5000,
+            self.auto_refresh
+        )
+
+    # ======================================================
+    # Create dashboard card
+    # ======================================================
 
     def create_card(
         self,
@@ -101,7 +164,7 @@ class DashboardPage(ctk.CTkFrame):
             row=row,
             column=column,
             padx=15,
-            pady=15,
+            pady=10,
             sticky="nsew"
         )
 
@@ -125,9 +188,9 @@ class DashboardPage(ctk.CTkFrame):
 
         return value_label
 
-    # -----------------------------------------
-    # Refresh
-    # -----------------------------------------
+    # ======================================================
+    # Update account cards
+    # ======================================================
 
     def refresh(self):
 
@@ -150,4 +213,224 @@ class DashboardPage(ctk.CTkFrame):
                 self.controller.get_open_trades()
             )
         )
-        
+
+        self.update_positions()
+
+    # ======================================================
+    # Auto refresh
+    # ======================================================
+
+    def auto_refresh(self):
+
+        try:
+
+            self.refresh()
+
+        except Exception as error:
+
+            print(
+                "Dashboard refresh error:",
+                error
+            )
+
+        self.after(
+            5000,
+            self.auto_refresh
+        )
+
+    # ======================================================
+    # Update positions table
+    # ======================================================
+
+    def update_positions(self):
+
+        # Remove old rows
+        for widget in self.positions_frame.winfo_children():
+
+            widget.destroy()
+
+        # --------------------------------------------------
+        # Table headers
+        # --------------------------------------------------
+
+        headers = [
+            "Asset",
+            "Action",
+            "Entry",
+            "Current",
+            "P/L",
+            "Status"
+        ]
+
+        for column, header in enumerate(headers):
+
+            label = ctk.CTkLabel(
+                self.positions_frame,
+                text=header,
+                font=("Segoe UI", 14, "bold")
+            )
+
+            label.grid(
+                row=0,
+                column=column,
+                padx=10,
+                pady=10,
+                sticky="ew"
+            )
+
+        # --------------------------------------------------
+        # Get open trades
+        # --------------------------------------------------
+
+        positions = self.controller.get_open_positions()
+
+        # --------------------------------------------------
+        # Empty portfolio
+        # --------------------------------------------------
+
+        if not positions:
+
+            empty = ctk.CTkLabel(
+                self.positions_frame,
+                text="No open positions",
+                font=("Segoe UI", 15)
+            )
+
+            empty.grid(
+                row=1,
+                column=0,
+                columnspan=6,
+                pady=30
+            )
+
+            return
+
+        # --------------------------------------------------
+        # Add positions
+        # --------------------------------------------------
+
+        for row, trade in enumerate(
+            positions,
+            start=1
+        ):
+
+            asset = trade.get(
+                "asset",
+                "Unknown"
+            )
+
+            action = trade.get(
+                "action",
+                "-"
+            )
+
+            entry = trade.get(
+                "entry"
+            )
+
+            current = trade.get(
+                "current_price"
+            )
+
+            profit_loss = trade.get(
+                "profit_loss"
+            )
+
+            status = trade.get(
+                "status",
+                "-"
+            )
+
+            # ----------------------------------------------
+            # Format values
+            # ----------------------------------------------
+
+            entry_text = self.format_price(
+                entry
+            )
+
+            current_text = self.format_price(
+                current
+            )
+
+            pnl_text = self.format_pnl(
+                profit_loss
+            )
+
+            # ----------------------------------------------
+            # Create row
+            # ----------------------------------------------
+
+            values = [
+                asset,
+                action,
+                entry_text,
+                current_text,
+                pnl_text,
+                status
+            ]
+
+            for column, value in enumerate(values):
+
+                label = ctk.CTkLabel(
+                    self.positions_frame,
+                    text=value,
+                    font=("Segoe UI", 14)
+                )
+
+                label.grid(
+                    row=row,
+                    column=column,
+                    padx=10,
+                    pady=8,
+                    sticky="ew"
+                )
+
+    # ======================================================
+    # Format price
+    # ======================================================
+
+    def format_price(self, value):
+
+        if value is None:
+
+            return "—"
+
+        try:
+
+            return f"£{float(value):,.2f}"
+
+        except (
+            ValueError,
+            TypeError
+        ):
+
+            return "—"
+
+    # ======================================================
+    # Format P/L
+    # ======================================================
+
+    def format_pnl(self, value):
+
+        if value is None:
+
+            return "—"
+
+        try:
+
+            value = float(value)
+
+            if value > 0:
+
+                return f"+£{value:,.2f}"
+
+            return f"£{value:,.2f}"
+
+        except (
+            ValueError,
+            TypeError
+        ):
+
+            return "—"
+            

@@ -13,25 +13,43 @@ from ui.theme import load_theme
 
 from ui.pages.dashboard_page import DashboardPage
 from ui.pages.scanner_page import ScannerPage
+from ui.pages.portfolio_page import PortfolioPage
 
 
 class IKAApp(ctk.CTk):
 
     def __init__(self):
+
         super().__init__()
 
         load_theme()
 
-        self.title(f"{APP_NAME} {VERSION}")
-        self.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
-        self.minsize(MIN_WIDTH, MIN_HEIGHT)
+        self.title(
+            f"{APP_NAME} {VERSION}"
+        )
+
+        self.geometry(
+            f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}"
+        )
+
+        self.minsize(
+            MIN_WIDTH,
+            MIN_HEIGHT
+        )
 
         # -----------------------------------------
         # Main window layout
         # -----------------------------------------
 
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(
+            1,
+            weight=1
+        )
+
+        self.grid_rowconfigure(
+            0,
+            weight=1
+        )
 
         # -----------------------------------------
         # Sidebar
@@ -55,7 +73,9 @@ class IKAApp(ctk.CTk):
             font=("Segoe UI", 28, "bold")
         )
 
-        logo.pack(pady=(30, 5))
+        logo.pack(
+            pady=(30, 5)
+        )
 
         subtitle = ctk.CTkLabel(
             self.sidebar,
@@ -63,7 +83,9 @@ class IKAApp(ctk.CTk):
             font=("Segoe UI", 14)
         )
 
-        subtitle.pack(pady=(0, 30))
+        subtitle.pack(
+            pady=(0, 30)
+        )
 
         # -----------------------------------------
         # Navigation
@@ -96,7 +118,7 @@ class IKAApp(ctk.CTk):
         self.portfolio_button = ctk.CTkButton(
             self.sidebar,
             text="💼 Portfolio",
-            state="disabled"
+            command=self.show_portfolio
         )
 
         self.portfolio_button.pack(
@@ -145,7 +167,9 @@ class IKAApp(ctk.CTk):
         # Main content
         # -----------------------------------------
 
-        self.main = ctk.CTkFrame(self)
+        self.main = ctk.CTkFrame(
+            self
+        )
 
         self.main.grid(
             row=0,
@@ -155,16 +179,31 @@ class IKAApp(ctk.CTk):
             pady=15
         )
 
-        self.main.grid_rowconfigure(0, weight=1)
-        self.main.grid_columnconfigure(0, weight=1)
+        self.main.grid_rowconfigure(
+            0,
+            weight=1
+        )
+
+        self.main.grid_columnconfigure(
+            0,
+            weight=1
+        )
 
         # -----------------------------------------
         # Pages
         # -----------------------------------------
 
-        self.dashboard_page = DashboardPage(self.main)
+        self.dashboard_page = DashboardPage(
+            self.main
+        )
 
-        self.scanner_page = ScannerPage(self.main)
+        self.scanner_page = ScannerPage(
+            self.main
+        )
+
+        self.portfolio_page = PortfolioPage(
+            self.main
+        )
 
         # -----------------------------------------
         # Status bar
@@ -189,14 +228,19 @@ class IKAApp(ctk.CTk):
         # Start on dashboard
         self.show_dashboard()
 
-    # -----------------------------------------
+    # =============================================
     # Page management
-    # -----------------------------------------
+    # =============================================
 
     def clear_pages(self):
 
         for widget in self.main.winfo_children():
+
             widget.grid_forget()
+
+    # =============================================
+    # Dashboard
+    # =============================================
 
     def show_dashboard(self):
 
@@ -212,6 +256,10 @@ class IKAApp(ctk.CTk):
             text="Dashboard loaded"
         )
 
+    # =============================================
+    # Scanner
+    # =============================================
+
     def show_scanner(self):
 
         self.clear_pages()
@@ -224,5 +272,25 @@ class IKAApp(ctk.CTk):
 
         self.status.configure(
             text="Scanner loaded"
+        )
+
+    # =============================================
+    # Portfolio
+    # =============================================
+
+    def show_portfolio(self):
+
+        self.clear_pages()
+
+        self.portfolio_page.refresh()
+
+        self.portfolio_page.grid(
+            row=0,
+            column=0,
+            sticky="nsew"
+        )
+
+        self.status.configure(
+            text="Portfolio loaded"
         )
         
