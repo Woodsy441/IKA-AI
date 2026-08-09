@@ -1,0 +1,13 @@
+"""
+IKA AI Configuration
+"""
+
+APP_NAME = "IKA AI"
+
+VERSION = "3.0.0 Alpha"
+
+WINDOW_WIDTH = 1600
+WINDOW_HEIGHT = 900
+
+MIN_WIDTH = 1200
+MIN_HEIGHT = 700
