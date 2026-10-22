@@ -12,6 +12,7 @@ on:
       - 'tests/test_v12_agent_coordinator.py'
       - 'tests/test_v12_research_runner.py'
       - 'tests/test_v12_dashboard.py'
+      - 'tests/test_v12_pipeline.py'
       - '.github/workflows/paper-research-checks.yml'
   push:
     branches:
@@ -40,3 +41,4 @@ jobs:
           python -m unittest discover -s tests -p 'test_v12_agent_coordinator.py' -v
           python -m unittest discover -s tests -p 'test_v12_research_runner.py' -v
           python -m unittest discover -s tests -p 'test_v12_dashboard.py' -v
+          python -m unittest discover -s tests -p 'test_v12_pipeline.py' -v
